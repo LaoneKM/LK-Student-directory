@@ -1,4 +1,4 @@
-PROJECT DISCRIPTION:This is the backend of the student directory app which allows the user to perform crud(Creare,Read,Update,Delete) operations on the web application. It is built using node.js, express, and SQLite(sqlite3) for the database.
+PROJECT DISCRIPTION:This is the backend of the student directory app which allows the user to perform crud(Creare,Read,Update,Delete) operations on the web application. It is built using node.js, express, and MySQL for the database.
 
 The system was developed using Node.js to run server-side JavaScript and Express.js to handle routing and HTTP requests. MySQL was used as the relational database for storing student records, with mysql2 enabling communication between the backend and the database. MySQL Workbench was used for database management and querying. Postman was used to test API endpoints, while Visual Studio Code served as the development environment for writing and managing the backend code.
 
