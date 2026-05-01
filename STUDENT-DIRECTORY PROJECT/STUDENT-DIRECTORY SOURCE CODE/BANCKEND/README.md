@@ -1,0 +1,5 @@
+PROJECT DISCRIPTION:This is the backend of the student directory app which allows the user to perform crud(Creare,Read,Update,Delete) operations on the web application. It is built using node.js, express, and SQLite(sqlite3) for the database.
+
+TECH STACK:Node.js(for running javascript on the server),Express(for creating the server.defining theAPI routes and handling the HTTP requests),SQLite(sqlite3 for constructing the database to store student records and connect the backend to the sqlite database),DB Browser for SQLite(for database management),Postman(for API testing), VS Code(for writing and managing all the backend codes).
+
+SETUP INSTRUCTIONS: On VS Code open the backend folder then open termminal and install dependencies( type in npm install). Run the server on the terminal( type in node server.js) and the sever will bocome live showing http://localhost:5000.
