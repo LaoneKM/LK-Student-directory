@@ -3,36 +3,40 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
-  const { username, password } = req.body;
-
   try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password required" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const db = await pool;
-    await db.request()
-      .input("username", username)
-      .input("password", hashedPassword)
-      .query(`
-        INSERT INTO Users (username, password)
-        VALUES (@username, @password)
-      `);
+    const [result] = await pool.execute(
+      "INSERT INTO Users (username, password) VALUES (?, ?)",
+      [username, hashedPassword]
+    );
 
-    res.json({ message: "User registered" });
+    res.status(201).json({
+      message: "User registered",
+      user_id: result.insertId
+    });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
 const login = async (req, res) => {
-  const { username, password } = req.body;
-
   try {
-    const db = await pool;
-    const result = await db.request()
-      .input("username", username)
-      .query("SELECT * FROM Users WHERE username = @username");
+    const { username, password } = req.body;
 
-    const user = result.recordset[0];
+    const [rows] = await pool.execute(
+      "SELECT * FROM Users WHERE username = ?",
+      [username]
+    );
+
+    const user = rows[0];
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -45,12 +49,13 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { user_id: user.user_id, username: user.username },
+      { user_id: user.id, username: user.username }, // ⚠️ adjust if your column name is different
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
     res.json({ token });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

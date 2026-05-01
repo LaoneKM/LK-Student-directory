@@ -1,56 +1,53 @@
-const db = require("../db");
+const { pool } = require("../db");
 
-
-const getStudents = (req, res) => {
-  db.all("SELECT * FROM students", [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-
-    const students = rows.map((row) => ({
-      id: row.id,        
-      name: row.name,       
-      course: row.course,
-      email: row.email,
-    }));
-
-    res.json(students);
-  });
+const getStudents = async (req, res) => {
+  try {
+    const [rows] = await pool.execute("SELECT * FROM students");
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-const addStudent = (req, res) => {
-  const { id, name, course, email } = req.body;
+const addStudent = async (req, res) => {
+  try {
+    const { name, course, email, user_id } = req.body;
 
-  db.run(
-    "INSERT INTO students (id, name, course, email) VALUES (?, ?, ?, ?)",
-    [id, name, course, email],
-    function (err) {
-      if (err) return res.status(500).json(err);
+    const [result] = await pool.execute(
+      "INSERT INTO students (name, course, email, user_id) VALUES (?, ?, ?, ?)",
+      [name, course, email, user_id]
+    );
 
-      res.json({
-        id: this.lastID,
-        name,
-        course,
-        email,
-      });
+    res.status(201).json({
+      id: result.insertId,
+      name,
+      course,
+      email,
+      user_id
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await pool.execute(
+      "DELETE FROM students WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Student not found" });
     }
-  );
+
+    res.json({ message: "Student deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
-
-const deleteStudent = (req, res) => {
-  const { id } = req.params;
-
-  db.run(
-    "DELETE FROM students WHERE student_id = ?",
-    [id],
-    function (err) {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      res.json({ message: "Student deleted" });
-    }
-  );
-};
-
 
 module.exports = {
   getStudents,

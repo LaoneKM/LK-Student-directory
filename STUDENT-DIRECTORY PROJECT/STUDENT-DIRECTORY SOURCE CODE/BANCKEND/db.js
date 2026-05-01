@@ -1,11 +1,10 @@
-const sqlite3 = require("sqlite3").verbose();
+const mysql = require("mysql2/promise");
 
-const db = new sqlite3.Database("./student_directory.db", (err) => {
-  if (err) {
-    console.error(err.message);
-  } else {
-    console.log("Connected to SQLite database");
-  }
+const pool = mysql.createPool({
+  host: "localhost",
+  user: "root",
+  password: "", 
+  database: "studentdirectory.db",
 });
 
-module.exports = db;
+module.exports = { pool };
