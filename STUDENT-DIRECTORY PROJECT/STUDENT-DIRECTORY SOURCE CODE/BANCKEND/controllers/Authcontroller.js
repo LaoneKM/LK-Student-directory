@@ -49,7 +49,7 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { user_id: user.id, username: user.username }, // ⚠️ adjust if your column name is different
+      { user_id: user.id, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
